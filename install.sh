@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REMOTE_NAME="flathub"
+REMOTE_URL="https://dl.flathub.org/repo/flathub.flatpakrepo"
+
+APPS=(
+  "org.keepassxc.KeePassXC"
+  "dev.zed.Zed"
+)
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+MONITOR_SWITCH_INSTALLER_SCRIPT="${SCRIPT_DIR}/monitor-switch-install.sh"
+ZED_INSTALLER_SCRIPT="${SCRIPT_DIR}/zed-installer.sh"
+PCLOUD_INSTALLER_SCRIPT="${SCRIPT_DIR}/pcloud-install.sh"
+
+echo
+echo "==> Checking Flatpak availability..."
+if ! command -v flatpak >/dev/null 2>&1; then
+  echo "ERROR: 'flatpak' is not installed or not in PATH."
+  echo "On Bazzite it should be available by default. Please install Flatpak first."
+  exit 1
+fi
+
+echo
+echo "==> Ensuring Flathub remote exists..."
+if ! flatpak remotes --columns=name | tail -n +2 | grep -qx "${REMOTE_NAME}"; then
+  echo "Adding Flathub remote..."
+  flatpak remote-add --if-not-exists "${REMOTE_NAME}" "${REMOTE_URL}"
+else
+  echo "Flathub remote already present."
+fi
+
+echo
+echo "==> Updating Flatpak appstream metadata..."
+flatpak update --appstream -y || true
+
+is_installed() {
+  local app_id="$1"
+  flatpak info "$app_id" >/dev/null 2>&1
+}
+
+install_app() {
+  local app_id="$1"
+
+  if is_installed "$app_id"; then
+    echo "==> Already installed: ${app_id} (skipping)"
+    return 0
+  fi
+
+  echo "==> Installing: ${app_id}"
+  flatpak install -y "${REMOTE_NAME}" "${app_id}"
+}
+
+run_helper_script() {
+  local script_path="$1"
+  local friendly_name="$2"
+
+  echo
+  echo "==> Running ${friendly_name}..."
+
+  if [[ ! -f "${script_path}" ]]; then
+    echo "ERROR: Missing helper script: ${script_path}"
+    echo "Make sure ${script_path##*/} exists in the same directory as install.sh."
+    exit 1
+  fi
+
+  chmod +x "${script_path}"
+  "${script_path}"
+}
+
+echo
+echo "==> Installing core applications (KeePassXC, Zed)..."
+for app in "${APPS[@]}"; do
+  install_app "$app"
+done
+
+# --- Helper scripts (consistent execution) ---
+run_helper_script "${MONITOR_SWITCH_INSTALLER_SCRIPT}" "Monitor switch installer logic"
+run_helper_script "${ZED_INSTALLER_SCRIPT}" "Zed installer logic"
+run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer logic (Option A client)"
+
+echo
+echo "==> Done."
+echo "Launch commands:"
+echo "  KeePassXC: flatpak run org.keepassxc.KeePassXC"
+echo "  Zed (GUI): flatpak run dev.zed.Zed"
+echo "  Zed (CLI): zed ."
+echo "  pCloud (Option A via S3Drive): flatpak run io.kapsa.drive"

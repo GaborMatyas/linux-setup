@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=monsa
+Comment=Switch to Samsung (DP)
+Exec=sh -lc "$HOME/.local/bin/monitor-switch.sh sa"
+Terminal=false
+Categories=Utility;

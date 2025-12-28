@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=monlg
+Comment=Switch to LG TV (HDMI)
+Exec=sh -lc "$HOME/.local/bin/monitor-switch.sh lg"
+Terminal=false
+Categories=Utility;
