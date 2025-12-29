@@ -10,9 +10,11 @@ APPS=(
 )
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-MONITOR_SWITCH_INSTALLER_SCRIPT="${SCRIPT_DIR}/monitor-switch-install.sh"
-ZED_INSTALLER_SCRIPT="${SCRIPT_DIR}/zed-installer.sh"
-PCLOUD_INSTALLER_SCRIPT="${SCRIPT_DIR}/pcloud-install.sh"
+SRC_DIR="$(cd -- "${SCRIPT_DIR}/src" &>/dev/null && pwd)"
+
+MONITOR_SWITCH_INSTALLER_SCRIPT="${SRC_DIR}/monitor-switch-install.sh"
+ZED_INSTALLER_SCRIPT="${SRC_DIR}/zed-installer.sh"
+PCLOUD_INSTALLER_SCRIPT="${SRC_DIR}/pcloud-install.sh"
 
 echo
 echo "==> Checking Flatpak availability..."

@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # Source folder for monitor switch files
-MONITOR_SWITCH_DIR="${SCRIPT_DIR}/files-to-copy/monitor-switch"
+MONITOR_SWITCH_DIR="${SCRIPT_DIR}/../files-to-copy/monitor-switch"
 
 # Destination locations (user-scoped, best practice on Bazzite)
 BIN_DIR="${HOME}/.local/bin"
