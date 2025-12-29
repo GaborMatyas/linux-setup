@@ -7,6 +7,7 @@ REMOTE_URL="https://dl.flathub.org/repo/flathub.flatpakrepo"
 APPS=(
   "org.keepassxc.KeePassXC"
   "dev.zed.Zed"
+  "org.mozilla.Thunderbird"
 )
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
@@ -15,6 +16,7 @@ SRC_DIR="$(cd -- "${SCRIPT_DIR}/src" &>/dev/null && pwd)"
 MONITOR_SWITCH_INSTALLER_SCRIPT="${SRC_DIR}/monitor-switch-install.sh"
 ZED_INSTALLER_SCRIPT="${SRC_DIR}/zed-installer.sh"
 PCLOUD_INSTALLER_SCRIPT="${SRC_DIR}/pcloud-install.sh"
+BAZZITE_GLOBAL_SHORTCUTS_SCRIPT="${SRC_DIR}/bazzite-global-shortcuts.sh"
 
 echo
 echo "==> Checking Flatpak availability..."
@@ -81,11 +83,7 @@ done
 run_helper_script "${MONITOR_SWITCH_INSTALLER_SCRIPT}" "Monitor switch installer logic"
 run_helper_script "${ZED_INSTALLER_SCRIPT}" "Zed installer logic"
 run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer logic (Option A client)"
+run_helper_script "${BAZZITE_GLOBAL_SHORTCUTS_SCRIPT}" "Bazzite KDE global shortcuts configuration"
 
 echo
 echo "==> Done."
-echo "Launch commands:"
-echo "  KeePassXC: flatpak run org.keepassxc.KeePassXC"
-echo "  Zed (GUI): flatpak run dev.zed.Zed"
-echo "  Zed (CLI): zed ."
-echo "  pCloud (Option A via S3Drive): flatpak run io.kapsa.drive"
