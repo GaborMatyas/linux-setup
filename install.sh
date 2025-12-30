@@ -17,6 +17,7 @@ MONITOR_SWITCH_INSTALLER_SCRIPT="${SRC_DIR}/monitor-switch-install.sh"
 ZED_INSTALLER_SCRIPT="${SRC_DIR}/zed-installer.sh"
 PCLOUD_INSTALLER_SCRIPT="${SRC_DIR}/pcloud-install.sh"
 BAZZITE_GLOBAL_SHORTCUTS_SCRIPT="${SRC_DIR}/bazzite-global-shortcuts.sh"
+BAZZITE_GLOBAL_CONFIG_SCRIPT="${SRC_DIR}/bazzite-global-config.sh"
 
 echo
 echo "==> Checking Flatpak availability..."
@@ -58,10 +59,10 @@ install_app() {
 
 run_helper_script() {
   local script_path="$1"
-  local friendly_name="$2"
+  local script_desc="$2"
 
   echo
-  echo "==> Running ${friendly_name}..."
+  echo "==> Running ${script_desc}..."
 
   if [[ ! -f "${script_path}" ]]; then
     echo "ERROR: Missing helper script: ${script_path}"
@@ -84,6 +85,7 @@ run_helper_script "${MONITOR_SWITCH_INSTALLER_SCRIPT}" "Monitor switch installer
 run_helper_script "${ZED_INSTALLER_SCRIPT}" "Zed installer logic"
 run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer logic (Option A client)"
 run_helper_script "${BAZZITE_GLOBAL_SHORTCUTS_SCRIPT}" "Bazzite KDE global shortcuts configuration"
+run_helper_script "${BAZZITE_GLOBAL_CONFIG_SCRIPT}" "Bazzite KDE global config change"
 
 echo
 echo "==> Done."
