@@ -16,5 +16,5 @@ fi
 echo "==> Installing: ${PCLOUD_CLIENT_APP_ID}"
 flatpak install -y "${REMOTE_NAME}" "${PCLOUD_CLIENT_APP_ID}"
 
-echo "==> pCloud client installed."
-echo "==> Launch command: flatpak run ${PCLOUD_CLIENT_APP_ID}"
+echo "==> pCloud client installed. Launch S3Drive app and log in with alternative pCloud service"
+echo "==> Or Launch command: flatpak run ${PCLOUD_CLIENT_APP_ID}"

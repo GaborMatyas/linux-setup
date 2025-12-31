@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# This file sets the Meta(Win)+Space keys as shurtcut for switching system language
+# This file sets the Meta(Win)+Space keys as shortcut for switching system language
 
 CONFIG_FILE="${HOME}/.config/kglobalshortcutsrc"
 
@@ -23,11 +23,6 @@ if ! grep -q "^${KEY_NAME}=" "${CONFIG_FILE}"; then
   echo "TIP: Run: grep -n \"${KEY_NAME}\" ${CONFIG_FILE}"
   exit 1
 fi
-
-# Backup before editing
-BACKUP_FILE="${CONFIG_FILE}.bak.$(date +%Y%m%d-%H%M%S)"
-cp -a "${CONFIG_FILE}" "${BACKUP_FILE}"
-echo "==> Backup created: ${BACKUP_FILE}"
 
 # Update the line deterministically
 # KDE shortcut format: <active>,<default>,<description>
