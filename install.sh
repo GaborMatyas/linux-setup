@@ -19,6 +19,7 @@ ZED_INSTALLER_SCRIPT="${SRC_DIR}/zed-installer.sh"
 PCLOUD_INSTALLER_SCRIPT="${SRC_DIR}/pcloud-install.sh"
 BAZZITE_GLOBAL_SHORTCUTS_SCRIPT="${SRC_DIR}/bazzite-global-shortcuts.sh"
 BAZZITE_GLOBAL_CONFIG_SCRIPT="${SRC_DIR}/bazzite-global-config.sh"
+KITTY_TERMINAL_INSTALLER_SCRIPT="${SRC_DIR}/kitty-terminal-installer.sh"
 
 echo
 echo "==> Checking Flatpak availability..."
@@ -87,6 +88,8 @@ run_helper_script "${ZED_INSTALLER_SCRIPT}" "Zed installer logic"
 run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer logic (Option A client)"
 run_helper_script "${BAZZITE_GLOBAL_SHORTCUTS_SCRIPT}" "Bazzite KDE global shortcuts configuration"
 run_helper_script "${BAZZITE_GLOBAL_CONFIG_SCRIPT}" "Bazzite KDE global config change"
+run_helper_script "${KITTY_TERMINAL_INSTALLER_SCRIPT}" "Install Kitty terminal"
 
 echo
 echo "==> Done."
+echo "==> Please restart the system so the new config and shortcut changes can be applied."

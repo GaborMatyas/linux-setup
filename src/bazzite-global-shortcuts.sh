@@ -2,7 +2,6 @@
 set -euo pipefail
 # This file sets the Meta(Win)+Space keys as shurtcut for switching system language
 
-
 CONFIG_FILE="${HOME}/.config/kglobalshortcutsrc"
 
 KEY_NAME="Switch to Next Keyboard Layout"
