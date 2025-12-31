@@ -69,4 +69,5 @@ echo
 echo "==> ${APP_ID} installed at: ${ZOXIDE_PATH}"
 echo "==> Version: $("${ZOXIDE_PATH}" --version || true)"
 echo "==> Bash integration snippet installed at: ${TARGET_ZOXIDE_SNIPPET}"
+echo "==> From now, the 'cd' command uses zoxide under the hood"
 echo "==> Restart your terminal or run: source ~/.bashrc"
