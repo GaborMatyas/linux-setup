@@ -23,6 +23,7 @@ KITTY_TERMINAL_INSTALLER_SCRIPT="${SRC_DIR}/kitty-terminal-installer.sh"
 ZOXIDE_CLI_TOOL_INSTALLER_SCRIPT="${SRC_DIR}/zoxide-install.sh"
 FZF_INSTALLER_SCRIPT="${SRC_DIR}/fzf-install.sh"
 RIPGREP_INSTALLER_SCRIPT="${SRC_DIR}/ripgrep-install.sh"
+FD_INSTALLER_SCRIPT="${SRC_DIR}/fd-install.sh"
 
 echo
 echo "==> Checking Flatpak availability..."
@@ -95,6 +96,7 @@ run_helper_script "${KITTY_TERMINAL_INSTALLER_SCRIPT}" "Install Kitty terminal"
 run_helper_script "${FZF_INSTALLER_SCRIPT}" "Install fzf CLI tool"
 run_helper_script "${ZOXIDE_CLI_TOOL_INSTALLER_SCRIPT}" "Install Zoxide cli tool to enhance navigation across folders in terminal"
 run_helper_script "${RIPGREP_INSTALLER_SCRIPT}" "Install ripgrep (rg) CLI tool"
+run_helper_script "${FD_INSTALLER_SCRIPT}" "Install fd (modern 'find' command alternative)"
 
 echo
 echo "==> Done."
