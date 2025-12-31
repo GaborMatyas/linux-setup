@@ -21,6 +21,7 @@ BAZZITE_GLOBAL_SHORTCUTS_SCRIPT="${SRC_DIR}/bazzite-global-shortcuts.sh"
 BAZZITE_GLOBAL_CONFIG_SCRIPT="${SRC_DIR}/bazzite-global-config.sh"
 KITTY_TERMINAL_INSTALLER_SCRIPT="${SRC_DIR}/kitty-terminal-installer.sh"
 ZOXIDE_CLI_TOOL_INSTALLER_SCRIPT="${SRC_DIR}/zoxide-install.sh"
+FZF_INSTALLER_SCRIPT="${SRC_DIR}/fzf-install.sh"
 
 echo
 echo "==> Checking Flatpak availability..."
@@ -90,6 +91,7 @@ run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer logic (Option A
 run_helper_script "${BAZZITE_GLOBAL_SHORTCUTS_SCRIPT}" "Bazzite KDE global shortcuts configuration"
 run_helper_script "${BAZZITE_GLOBAL_CONFIG_SCRIPT}" "Bazzite KDE global config change"
 run_helper_script "${KITTY_TERMINAL_INSTALLER_SCRIPT}" "Install Kitty terminal"
+run_helper_script "${FZF_INSTALLER_SCRIPT}" "Install fzf CLI tool"
 run_helper_script "${ZOXIDE_CLI_TOOL_INSTALLER_SCRIPT}" "Install Zoxide cli tool to enhance navigation across folders in terminal"
 
 echo
