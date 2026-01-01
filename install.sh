@@ -9,6 +9,7 @@ APPS=(
   "dev.zed.Zed"
   "org.mozilla.Thunderbird"
   "com.transmissionbt.Transmission"
+  "org.videolan.VLC"
 )
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
