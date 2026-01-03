@@ -3,6 +3,9 @@ set -euo pipefail
 # This script configures KDE global shortcuts:
 # - Switch keyboard layout: Meta+Space
 # - KRunner: Ctrl+Space (instead of Alt+Space)
+#
+# NOTE: This script does NOT attempt to reload KDE shortcut services.
+# The changes will take effect after logging out/in or rebooting.
 
 CONFIG_FILE="${HOME}/.config/kglobalshortcutsrc"
 
@@ -42,7 +45,6 @@ if ! grep -q "^${KEYBOARD_LAYOUT_KEY_NAME}=" "${CONFIG_FILE}"; then
   exit 1
 fi
 
-# Update line deterministically:
 # KDE shortcut format for this entry: <active>,<default>,<description>
 sed -i \
   "s|^${KEYBOARD_LAYOUT_KEY_NAME}=.*|${KEYBOARD_LAYOUT_KEY_NAME}=${KEYBOARD_LAYOUT_SHORTCUT},${KEYBOARD_LAYOUT_SHORTCUT},${KEYBOARD_LAYOUT_KEY_NAME}|" \
@@ -50,7 +52,6 @@ sed -i \
 
 ok "Updated keyboard layout shortcut:"
 grep -n "^${KEYBOARD_LAYOUT_KEY_NAME}=" "${CONFIG_FILE}"
-
 
 # ----------------------------
 # KRunner shortcut
@@ -68,7 +69,6 @@ if ! grep -q "^\[services\]\[org\.kde\.krunner\.desktop\]$" "${CONFIG_FILE}"; th
 fi
 
 # Replace or insert the key under the section header.
-# This is safe with set -euo pipefail and works even if the key is missing.
 awk -v section="${KRUNNER_SECTION_HEADER}" -v key="${KRUNNER_KEY}" -v value="${KRUNNER_VALUE}" '
   BEGIN { in_section=0; key_written=0 }
   $0 == section { in_section=1; print; next }
@@ -98,20 +98,6 @@ mv "${CONFIG_FILE}.tmp" "${CONFIG_FILE}"
 
 ok "Updated KRunner shortcut line:"
 sed -n "/^\[services\]\[org\.kde\.krunner\.desktop\]$/,/^\[/p" "${CONFIG_FILE}" | grep -n "^${KRUNNER_KEY}=" || true
-
-
-# ----------------------------
-# Reload KDE global shortcuts
-# ----------------------------
-echo
-info "Reloading KDE global shortcuts so changes apply..."
-
-if command -v kquitapp6 >/dev/null 2>&1 && command -v kglobalaccel6 >/dev/null 2>&1; then
-  info "Reloading via kquitapp6/kglobalaccel6..."
-  kquitapp6 kglobalaccel >/dev/null 2>&1 || true
-  kglobalaccel6 >/dev/null 2>&1 &
-  disown || true
-  ok "KDE global shortcuts reloaded (kglobalaccel)."
 
 echo
 ok "KDE shortcut configuration complete."
