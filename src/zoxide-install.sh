@@ -7,6 +7,9 @@ APP_ID="zoxide"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
 
+# shellcheck source=src/utils/create-symlink.sh
+source "${REPO_ROOT}/src/utils/create-symlink.sh"
+
 REPO_ZOXIDE_BASHRC_SNIPPET="${REPO_ROOT}/files-to-copy/dotfiles/bashrc.d/zoxide.sh"
 
 # Target paths
@@ -30,12 +33,12 @@ if [[ ! -f "${REPO_ZOXIDE_BASHRC_SNIPPET}" ]]; then
   exit 1
 fi
 
-cp -f "${REPO_ZOXIDE_BASHRC_SNIPPET}" "${TARGET_ZOXIDE_SNIPPET}"
-chmod 0644 "${TARGET_ZOXIDE_SNIPPET}"
+create_symlink "${REPO_ZOXIDE_BASHRC_SNIPPET}" "${TARGET_ZOXIDE_SNIPPET}"
 
-echo "==> Copied: ${REPO_ZOXIDE_BASHRC_SNIPPET}"
-echo "==> To:     ${TARGET_ZOXIDE_SNIPPET}"
-echo "==> Note: This file is repo-managed and overwritten on every run."
+echo "==> Snippet installed:"
+echo "==>   Source: ${REPO_ZOXIDE_BASHRC_SNIPPET}"
+echo "==>   Target: ${TARGET_ZOXIDE_SNIPPET}"
+echo "==> Note: This file is repo-managed via symlink. Updates require no reinstall."
 
 # --- Install zoxide binary if missing ---
 if [[ -x "${ZOXIDE_PATH}" ]]; then
@@ -69,5 +72,4 @@ echo
 echo "==> ${APP_ID} installed at: ${ZOXIDE_PATH}"
 echo "==> Version: $("${ZOXIDE_PATH}" --version || true)"
 echo "==> Bash integration snippet installed at: ${TARGET_ZOXIDE_SNIPPET}"
-echo "==> From now, the 'cd' command uses zoxide under the hood"
 echo "==> Restart your terminal or run: source ~/.bashrc"

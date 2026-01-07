@@ -6,6 +6,10 @@ APP_ID="fzf"
 # Repo paths
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
+
+# shellcheck source=src/utils/create-symlink.sh
+source "${REPO_ROOT}/src/utils/create-symlink.sh"
+
 REPO_FZF_BASHRC_SNIPPET="${REPO_ROOT}/files-to-copy/dotfiles/bashrc.d/fzf.sh"
 
 # Target bashrc.d paths (repo-managed snippet)
@@ -22,7 +26,7 @@ GITHUB_API_LATEST="https://api.github.com/repos/junegunn/fzf/releases/latest"
 echo
 echo "==> Installing ${APP_ID}..."
 
-# --- Always copy/override bash integration snippet (repo-managed) ---
+# --- Always install/override bash integration snippet (repo-managed) ---
 echo
 echo "==> Installing bash integration snippet..."
 mkdir -p "${BASHRC_D_DIR}"
@@ -33,12 +37,12 @@ if [[ ! -f "${REPO_FZF_BASHRC_SNIPPET}" ]]; then
   exit 1
 fi
 
-cp -f "${REPO_FZF_BASHRC_SNIPPET}" "${TARGET_FZF_SNIPPET}"
-chmod 0644 "${TARGET_FZF_SNIPPET}"
+create_symlink "${REPO_FZF_BASHRC_SNIPPET}" "${TARGET_FZF_SNIPPET}"
 
-echo "==> Copied: ${REPO_FZF_BASHRC_SNIPPET}"
-echo "==> To:     ${TARGET_FZF_SNIPPET}"
-echo "==> Note: This file is repo-managed and overwritten on every run."
+echo "==> Snippet installed:"
+echo "==>   Source: ${REPO_FZF_BASHRC_SNIPPET}"
+echo "==>   Target: ${TARGET_FZF_SNIPPET}"
+echo "==> Note: This file is repo-managed via symlink. Updates require no reinstall."
 
 # --- If fzf exists, we still refreshed the snippet and can stop ---
 if [[ -x "${FZF_BIN}" ]]; then
