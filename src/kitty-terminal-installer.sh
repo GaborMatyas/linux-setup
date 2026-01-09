@@ -34,6 +34,7 @@ REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
 source "${REPO_ROOT}/src/utils/create-symlink.sh"
 
 REPO_KITTY_CONF="${REPO_ROOT}/files-to-copy/dotfiles/kitty/kitty.conf"
+REPO_KITTY_THEME="${REPO_ROOT}/files-to-copy/dotfiles/kitty/theme.conf"
 
 # Treat kitty as installed if the expected install directory exists,
 # or if kitty is already on PATH.
@@ -57,6 +58,17 @@ install_kitty_config() {
   echo "==> Config installed:"
   echo "==>   Source: ${REPO_KITTY_CONF}"
   echo "==>   Target: ${KITTY_CONFIG_FILE}"
+
+  # Install theme.conf if it exists
+  if [[ -f "${REPO_KITTY_THEME}" ]]; then
+    echo
+    echo "==> Installing kitty theme config (repo-managed via symlink)..."
+    local theme_target="${KITTY_CONFIG_DIR}/theme.conf"
+    create_symlink "${REPO_KITTY_THEME}" "${theme_target}"
+    echo "==> Theme installed:"
+    echo "==>   Source: ${REPO_KITTY_THEME}"
+    echo "==>   Target: ${theme_target}"
+  fi
 }
 
 # If kitty is already installed, still ensure config is linked
