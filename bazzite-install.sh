@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+#
+# bazzite-install.sh - Bazzite Linux Setup Installer
+#
+# This script installs and configures applications and settings
+# specifically for Bazzite Linux (an immutable Fedora-based distro).
+#
+# Usage:
+#   ./bazzite-install.sh
+#
+# Part of linux-setup repository - multi-OS dotfiles and configurations
+# For other operating systems, see:
+#   - macos-install.sh (coming soon)
+#   - wsl-install.sh (coming soon)
+#
 set -euo pipefail
 
 REMOTE_NAME="flathub"
