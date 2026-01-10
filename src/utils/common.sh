@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# common.sh - Common utility library for bazzite-setup scripts
+# common.sh - Common utility library for setup scripts
 #
 # Usage:
 #   source "${REPO_ROOT}/src/utils/common.sh"
