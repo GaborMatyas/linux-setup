@@ -26,12 +26,10 @@ CONFIG_DIR="${HOME}/.config"
 KITTY_CONFIG_DIR="${CONFIG_DIR}/kitty"
 KITTY_CONFIG_FILE="${KITTY_CONFIG_DIR}/kitty.conf"
 
-# Repo paths
+# Setup utilities
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
-
-# shellcheck source=src/utils/create-symlink.sh
-source "${REPO_ROOT}/src/utils/create-symlink.sh"
+source "${REPO_ROOT}/src/utils/common.sh"
 
 REPO_KITTY_CONF="${REPO_ROOT}/files-to-copy/dotfiles/kitty/kitty.conf"
 REPO_KITTY_THEME="${REPO_ROOT}/files-to-copy/dotfiles/kitty/theme.conf"
@@ -43,102 +41,90 @@ is_kitty_installed() {
 }
 
 install_kitty_config() {
-  echo
-  echo "==> Installing kitty config (repo-managed via symlink)..."
+  log_info "Installing kitty config (repo-managed via symlink)..."
 
   if [[ ! -f "${REPO_KITTY_CONF}" ]]; then
-    echo "ERROR: Missing repo config: ${REPO_KITTY_CONF}"
-    echo "Create it at: files-to-copy/dotfiles/kitty/kitty.conf"
+    log_error "Missing repo config: ${REPO_KITTY_CONF}"
+    log_result "Expected at" "files-to-copy/dotfiles/kitty/kitty.conf"
     exit 1
   fi
 
   mkdir -p "${KITTY_CONFIG_DIR}"
   create_symlink "${REPO_KITTY_CONF}" "${KITTY_CONFIG_FILE}"
-
-  echo "==> Config installed:"
-  echo "==>   Source: ${REPO_KITTY_CONF}"
-  echo "==>   Target: ${KITTY_CONFIG_FILE}"
+  log_success "Config installed"
+  log_result "Source" "${REPO_KITTY_CONF}"
+  log_result "Target" "${KITTY_CONFIG_FILE}"
 
   # Install theme.conf if it exists
   if [[ -f "${REPO_KITTY_THEME}" ]]; then
-    echo
-    echo "==> Installing kitty theme config (repo-managed via symlink)..."
+    log_info "Installing kitty theme config (repo-managed via symlink)..."
     local theme_target="${KITTY_CONFIG_DIR}/theme.conf"
     create_symlink "${REPO_KITTY_THEME}" "${theme_target}"
-    echo "==> Theme installed:"
-    echo "==>   Source: ${REPO_KITTY_THEME}"
-    echo "==>   Target: ${theme_target}"
+    log_success "Theme installed"
+    log_result "Source" "${REPO_KITTY_THEME}"
+    log_result "Target" "${theme_target}"
   fi
 }
 
+section_header "Installing ${APP_ID}"
+
 # If kitty is already installed, still ensure config is linked
 if is_kitty_installed; then
-  echo "==> Already installed: ${APP_ID} (skipping)"
+  log_skip "Already installed: ${APP_ID}"
   install_kitty_config
+  section_end
   exit 0
 fi
 
-echo
-echo "==> Installing kitty via official binary installer..."
+log_info "Checking dependencies..."
+check_dependency curl
+log_success "Dependencies satisfied"
 
-if ! command -v curl >/dev/null 2>&1; then
-  echo "ERROR: curl is required but not installed."
-  exit 1
-fi
-
-# Run the installer (standard location on Linux: ~/.local/kitty.app)
+log_info "Installing kitty via official binary installer..."
 curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
 
 if [[ ! -d "${KITTY_INSTALL_DIR}" ]]; then
-  echo "ERROR: Expected kitty install directory not found: ${KITTY_INSTALL_DIR}"
-  echo "The installer may have failed or installed to a different location."
+  log_error "Expected kitty install directory not found: ${KITTY_INSTALL_DIR}"
+  log_warn "The installer may have failed or installed to a different location"
   exit 1
 fi
+log_success "Kitty installed"
 
-echo
-echo "==> Setting up PATH symlinks (kitty + kitten)..."
+log_info "Setting up PATH symlinks (kitty + kitten)..."
 mkdir -p "${BIN_DIR}"
-
-# Recommended symlink command from docs:
-# ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
 ln -sf "${KITTY_INSTALL_DIR}/bin/kitty" "${KITTY_INSTALL_DIR}/bin/kitten" "${BIN_DIR}/"
+log_success "PATH symlinks created"
 
-echo
-echo "==> Installing desktop integration (.desktop files)..."
+log_info "Installing desktop integration (.desktop files)..."
 mkdir -p "${APP_DIR}"
-
-# Recommended copy commands from docs:
-# cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
-# cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
 cp -f "${KITTY_INSTALL_DIR}/share/applications/kitty.desktop" "${APP_DIR}/"
 cp -f "${KITTY_INSTALL_DIR}/share/applications/kitty-open.desktop" "${APP_DIR}/"
+log_success "Desktop files installed"
 
-echo
-echo "==> Patching Exec= and Icon= in kitty desktop files..."
+log_info "Patching Exec= and Icon= in kitty desktop files..."
 KITTY_ICON_PATH="$(readlink -f "${HOME}")/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png"
 KITTY_EXEC_PATH="$(readlink -f "${HOME}")/.local/kitty.app/bin/kitty"
-
-# Recommended sed commands from docs:
 sed -i "s|Icon=kitty|Icon=${KITTY_ICON_PATH}|g" "${APP_DIR}"/kitty*.desktop
 sed -i "s|Exec=kitty|Exec=${KITTY_EXEC_PATH}|g" "${APP_DIR}"/kitty*.desktop
+log_success "Desktop files patched"
 
-echo
-echo "==> Setting kitty as default terminal for xdg-terminal-exec..."
+log_info "Setting kitty as default terminal for xdg-terminal-exec..."
 mkdir -p "${CONFIG_DIR}"
 echo 'kitty.desktop' > "${CONFIG_DIR}/xdg-terminals.list"
+log_success "Default terminal configured"
 
 # Install repo-managed config after installation
 install_kitty_config
 
-echo
-echo "==> Verifying installation..."
+log_info "Verifying installation..."
 if command -v kitty >/dev/null 2>&1; then
-  echo "==> kitty available on PATH: $(command -v kitty)"
+  log_success "Installation complete"
+  log_result "Binary" "$(command -v kitty)"
 else
-  echo "WARNING: kitty is not found on PATH."
-  echo "Ensure ${BIN_DIR} is included in your system-wide PATH."
+  log_warn "kitty is not found on PATH"
+  log_result "Expected" "${BIN_DIR} should be in PATH"
 fi
 
-echo
-echo "==> Done installing kitty."
-echo "==> You may need to log out/in (or reboot) for desktop environment menus to refresh."
+log_result "Note" "Log out/in (or reboot) for desktop menus to refresh"
+
+section_end

@@ -4,11 +4,10 @@ set -euo pipefail
 APP_ID="yazi"
 FLATPAK_APP_ID="io.github.sxyazi.yazi"
 
+# Setup utilities
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
-
-# shellcheck source=src/utils/create-symlink.sh
-source "${REPO_ROOT}/src/utils/create-symlink.sh"
+source "${REPO_ROOT}/src/utils/common.sh"
 
 # Repo-managed wrapper
 YAZI_WRAPPER_SRC="${REPO_ROOT}/files-to-copy/bin/yazi"
@@ -17,53 +16,54 @@ YAZI_WRAPPER_SRC="${REPO_ROOT}/files-to-copy/bin/yazi"
 LOCAL_BIN="${HOME}/.local/bin"
 TARGET_WRAPPER="${LOCAL_BIN}/yazi"
 
-echo
-echo "==> Installing ${APP_ID} CLI wrapper..."
+section_header "Installing ${APP_ID} CLI Wrapper"
 
 # Validate flatpak exists
-if ! command -v flatpak >/dev/null 2>&1; then
-  echo "ERROR: flatpak is not installed. Cannot install ${APP_ID} wrapper."
-  exit 1
-fi
+log_info "Checking dependencies..."
+check_dependency flatpak
+log_success "Flatpak available"
 
 # Validate yazi flatpak exists
-if ! flatpak info "${FLATPAK_APP_ID}" >/dev/null 2>&1; then
-  echo "ERROR: Flatpak not installed: ${FLATPAK_APP_ID}"
-  echo "TIP: Add it to your APPS array in install.sh and rerun."
+log_info "Checking for yazi flatpak..."
+if ! is_installed flatpak "${FLATPAK_APP_ID}"; then
+  log_error "Flatpak not installed: ${FLATPAK_APP_ID}"
+  log_warn "Add it to your APPS array in install.sh and rerun"
   exit 1
 fi
+log_success "Yazi flatpak found"
 
 mkdir -p "${LOCAL_BIN}"
 
 # Validate wrapper file exists in repo
 if [[ ! -f "${YAZI_WRAPPER_SRC}" ]]; then
-  echo "ERROR: Missing repo wrapper: ${YAZI_WRAPPER_SRC}"
-  echo "Make sure files-to-copy/bin/yazi exists in your repo."
+  log_error "Missing repo wrapper: ${YAZI_WRAPPER_SRC}"
+  log_result "Expected at" "files-to-copy/bin/yazi"
   exit 1
 fi
 
 # Symlink wrapper and ensure source is executable
+log_info "Creating wrapper symlink..."
 create_symlink "${YAZI_WRAPPER_SRC}" "${TARGET_WRAPPER}" --chmod-x
-
-echo "==> Wrapper installed:"
-echo "==>   Source: ${YAZI_WRAPPER_SRC}"
-echo "==>   Target: ${TARGET_WRAPPER}"
-echo "==> Note: Wrapper is repo-managed via symlink."
+log_success "Wrapper installed"
+log_result "Source" "${YAZI_WRAPPER_SRC}"
+log_result "Target" "${TARGET_WRAPPER}"
 
 # Validate wrapper exists and is executable
 if [[ ! -x "${TARGET_WRAPPER}" ]]; then
-  echo "ERROR: Wrapper is not executable: ${TARGET_WRAPPER}"
-  echo "TIP: Ensure repo file is executable: chmod +x ${YAZI_WRAPPER_SRC}"
+  log_error "Wrapper is not executable: ${TARGET_WRAPPER}"
+  log_warn "Ensure repo file is executable: chmod +x ${YAZI_WRAPPER_SRC}"
   exit 1
 fi
 
-echo
-echo "==> Verifying Flatpak installation..."
-flatpak run "${FLATPAK_APP_ID}" --version >/dev/null 2>&1 || {
-  echo "ERROR: Flatpak exists but failed to run: ${FLATPAK_APP_ID}"
-  echo "TIP: Try manually: flatpak run ${FLATPAK_APP_ID} --version"
+# Verify Flatpak installation
+log_info "Verifying Flatpak installation..."
+if ! flatpak run "${FLATPAK_APP_ID}" --version >/dev/null 2>&1; then
+  log_error "Flatpak exists but failed to run: ${FLATPAK_APP_ID}"
+  log_warn "Try manually: flatpak run ${FLATPAK_APP_ID} --version"
   exit 1
-}
+fi
 
-echo "==> ${APP_ID} wrapper installed successfully."
-echo "==> Run: yazi"
+log_success "Wrapper configured successfully"
+log_result "Run" "yazi"
+
+section_end

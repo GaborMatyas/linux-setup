@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo
-echo "==> Configuring KDE power management + screen locking..."
+# Setup utilities
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
+source "${REPO_ROOT}/src/utils/common.sh"
+
+section_header "Configuring KDE Power Management & Screen Locking"
 
 # ---------------------------
 # Power management settings
 # ---------------------------
-# Goal: prevent suspend/hibernate due to idle on AC power
-# Dim screen after 2 minutes (requested)
-# Keep screen ON (disable DPMS screen-off)
+log_info "Configuring power management..."
 
 # Dim automatically after 2 minutes idle
 kwriteconfig6 --file powermanagementprofilesrc --group AC --group DimDisplay --key idleTime 5
@@ -25,45 +27,36 @@ kwriteconfig6 --file powermanagementprofilesrc --group AC --group SuspendSession
 kwriteconfig6 --file powermanagementprofilesrc --group AC --group HandleButtonEvents --key lidAction 0
 kwriteconfig6 --file powermanagementprofilesrc --group AC --group HandleButtonEvents --key powerButtonAction 16
 
-echo "==> Power management configured: dim after 2 minutes; no idle suspend/hibernate; no idle DPMS on AC."
-
+log_success "Power management configured"
+log_result "Dim screen" "After 2 minutes"
+log_result "DPMS screen-off" "Disabled"
+log_result "Idle suspend" "Disabled"
 
 # ---------------------------
 # Screen locking settings
 # ---------------------------
-# Requirements:
-# - Lock screen automatically in 2 minutes
-# - Delay before password required: 5 minutes
-# - Lock on resume: enabled
+log_info "Configuring screen locking..."
 
 kwriteconfig6 --file kscreenlockerrc --group Daemon --key Autolock true
 kwriteconfig6 --file kscreenlockerrc --group Daemon --key Timeout 2
 kwriteconfig6 --file kscreenlockerrc --group Daemon --key LockGrace 300
 kwriteconfig6 --file kscreenlockerrc --group Daemon --key LockOnResume true
 
-echo "==> Screen locking configured: auto-lock after 2 minutes; password required after 5 minutes; lock on resume enabled."
-
+log_success "Screen locking configured"
+log_result "Auto-lock" "After 2 minutes"
+log_result "Password grace" "5 minutes"
+log_result "Lock on resume" "Enabled"
 
 # ---------------------------
-# Validation (prints current values)
+# Validation
 # ---------------------------
-echo
-echo "==> Validating applied settings..."
+log_info "Validating applied settings..."
 
-echo "Power management (AC profile):"
-echo "  DimDisplay idleTime:     $(kreadconfig6 --file powermanagementprofilesrc --group AC --group DimDisplay --key idleTime || true) minutes"
-echo "  DPMSControl idleTime:    $(kreadconfig6 --file powermanagementprofilesrc --group AC --group DPMSControl --key idleTime || true) minutes"
-echo "  SuspendSession idleTime: $(kreadconfig6 --file powermanagementprofilesrc --group AC --group SuspendSession --key idleTime || true)"
-echo "  SuspendSession suspendType: $(kreadconfig6 --file powermanagementprofilesrc --group AC --group SuspendSession --key suspendType || true)"
-echo "  Lid action:              $(kreadconfig6 --file powermanagementprofilesrc --group AC --group HandleButtonEvents --key lidAction || true)"
+log_result "DimDisplay idleTime" "$(kreadconfig6 --file powermanagementprofilesrc --group AC --group DimDisplay --key idleTime || true) minutes"
+log_result "DPMSControl idleTime" "$(kreadconfig6 --file powermanagementprofilesrc --group AC --group DPMSControl --key idleTime || true) minutes"
+log_result "Autolock" "$(kreadconfig6 --file kscreenlockerrc --group Daemon --key Autolock || true)"
+log_result "Lock timeout" "$(kreadconfig6 --file kscreenlockerrc --group Daemon --key Timeout || true) minutes"
 
-echo
-echo "Screen locking:"
-echo "  Autolock:      $(kreadconfig6 --file kscreenlockerrc --group Daemon --key Autolock || true)"
-echo "  Timeout:       $(kreadconfig6 --file kscreenlockerrc --group Daemon --key Timeout || true) minutes"
-echo "  LockGrace:     $(kreadconfig6 --file kscreenlockerrc --group Daemon --key LockGrace || true) seconds"
-echo "  LockOnResume:  $(kreadconfig6 --file kscreenlockerrc --group Daemon --key LockOnResume || true)"
+log_warn "Changes may require logout/reboot to take effect"
 
-echo
-echo "==> Done."
-echo "==> NOTE: If changes do not apply immediately, log out/in or reboot KDE Plasma."
+section_end

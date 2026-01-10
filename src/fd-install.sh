@@ -7,101 +7,64 @@ BIN_NAME="fd"
 LOCAL_BIN="${HOME}/.local/bin"
 FD_BIN="${LOCAL_BIN}/${BIN_NAME}"
 
-GITHUB_API_LATEST="https://api.github.com/repos/sharkdp/fd/releases/latest"
+# Setup utilities
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
+source "${REPO_ROOT}/src/utils/common.sh"
 
-echo
-echo "==> Installing ${APP_ID} (${BIN_NAME})..."
+section_header "Installing ${APP_ID}"
 
-# --- Already-installed check (same style as your install.sh) ---
-if [[ -x "${FD_BIN}" ]]; then
-  echo "==> Already installed: ${APP_ID} (skipping)"
-  echo "==> Binary: ${FD_BIN}"
-  echo "==> Version: $("${FD_BIN}" --version | head -n1 || true)"
+# Check if already installed
+if is_installed binary "${FD_BIN}"; then
+  log_skip "Already installed: ${APP_ID}"
+  log_result "Binary" "${FD_BIN}"
+  log_result "Version" "$("${FD_BIN}" --version | head -n1 || true)"
+  section_end
   exit 0
 fi
 
-# --- Dependencies ---
-if ! command -v curl >/dev/null 2>&1; then
-  echo "ERROR: curl is required but not installed."
-  exit 1
-fi
-
-if ! command -v tar >/dev/null 2>&1; then
-  echo "ERROR: tar is required but not installed."
-  exit 1
-fi
+# Check dependencies
+log_info "Checking dependencies..."
+check_dependency curl
+check_dependency tar
+log_success "Dependencies satisfied"
 
 mkdir -p "${LOCAL_BIN}"
 
-# --- Detect architecture ---
-ARCH="$(uname -m)"
-case "${ARCH}" in
-  x86_64)   PLATFORM="x86_64-unknown-linux-gnu" ;;
-  aarch64)  PLATFORM="aarch64-unknown-linux-gnu" ;;
-  *)
-    echo "ERROR: Unsupported architecture: ${ARCH}"
-    echo "Supported: x86_64, aarch64"
-    exit 1
-    ;;
-esac
+# Detect architecture
+log_info "Detecting system architecture..."
+PLATFORM="$(detect_architecture fd)"
+log_success "Architecture: ${PLATFORM}"
 
-echo
-echo "==> Fetching latest release metadata from GitHub..."
+# Fetch latest release
+log_info "Fetching latest release from GitHub..."
+DOWNLOAD_URL="$(fetch_github_release sharkdp fd "fd-v[0-9]+\.[0-9]+\.[0-9]+-${PLATFORM}\.tar\.gz")"
+log_success "Found release"
 
-# fd release assets typically look like:
-#   fd-v9.0.0-x86_64-unknown-linux-gnu.tar.gz
-#   fd-v9.0.0-aarch64-unknown-linux-gnu.tar.gz
-DOWNLOAD_URL="$(
-  curl -fsSL "${GITHUB_API_LATEST}" \
-    | grep -oE "https://github.com/sharkdp/fd/releases/download/[^\"]+/fd-v[0-9]+\.[0-9]+\.[0-9]+-${PLATFORM}\.tar\.gz" \
-    | head -n1
-)"
+# Download and extract
+log_info "Downloading and extracting..."
+TMP_DIR="$(create_temp_dir)"
+download_and_extract "${DOWNLOAD_URL}" "${TMP_DIR}"
+log_success "Download complete"
 
-if [[ -z "${DOWNLOAD_URL}" ]]; then
-  echo "ERROR: Could not determine latest ${APP_ID} download URL for platform: ${PLATFORM}"
-  echo "TIP: Check releases manually: https://github.com/sharkdp/fd/releases"
-  exit 1
-fi
-
-echo "==> Download URL: ${DOWNLOAD_URL}"
-
-TMP_DIR="$(mktemp -d)"
-cleanup() { rm -rf "${TMP_DIR}"; }
-trap cleanup EXIT
-
-TARBALL="${TMP_DIR}/fd.tar.gz"
-
-echo
-echo "==> Downloading ${APP_ID}..."
-curl -fsSL "${DOWNLOAD_URL}" -o "${TARBALL}"
-
-echo
-echo "==> Extracting..."
-tar -xzf "${TARBALL}" -C "${TMP_DIR}"
-
-# Find extracted directory (fd-v<version>-<platform>)
+# Find extracted directory
 EXTRACTED_DIR="$(find "${TMP_DIR}" -maxdepth 1 -type d -name "fd-v*-*" | head -n1)"
 if [[ -z "${EXTRACTED_DIR}" ]]; then
-  echo "ERROR: Could not locate extracted fd directory."
+  log_error "Could not locate extracted fd directory"
   exit 1
 fi
 
 if [[ ! -f "${EXTRACTED_DIR}/fd" ]]; then
-  echo "ERROR: Extracted tarball does not contain 'fd' binary as expected."
+  log_error "Extracted tarball does not contain 'fd' binary as expected"
   exit 1
 fi
 
-echo
-echo "==> Installing binary to: ${FD_BIN}"
-install -m 0755 "${EXTRACTED_DIR}/fd" "${FD_BIN}"
+# Install binary
+log_info "Installing binary..."
+install_binary "${EXTRACTED_DIR}/fd" "${FD_BIN}"
+log_success "Installation complete"
 
-# Validate
-if [[ ! -x "${FD_BIN}" ]]; then
-  echo "ERROR: fd binary not found at expected location: ${FD_BIN}"
-  exit 1
-fi
+log_result "Binary" "${FD_BIN}"
+log_result "Version" "$("${FD_BIN}" --version | head -n1 || true)"
 
-echo
-echo "==> ${APP_ID} installed successfully."
-echo "==> Binary: ${FD_BIN}"
-echo "==> Version: $("${FD_BIN}" --version | head -n1 || true)"
+section_end

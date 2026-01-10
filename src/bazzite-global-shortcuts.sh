@@ -7,6 +7,11 @@ set -euo pipefail
 # NOTE: This script does NOT attempt to reload KDE shortcut services.
 # The changes will take effect after logging out/in or rebooting.
 
+# Setup utilities
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
+source "${REPO_ROOT}/src/utils/common.sh"
+
 CONFIG_FILE="${HOME}/.config/kglobalshortcutsrc"
 
 # 1) Keyboard layout switching
@@ -19,29 +24,23 @@ KRUNNER_KEY="_launch"
 # Keep Alt+F2 as fallback; remove Alt+Space by omitting it
 KRUNNER_VALUE="Ctrl+Space\tSearch\tAlt+F2"
 
-# Message helpers
-ok()   { echo "✅ $*"; }
-warn() { echo "❗ $*"; }
-info() { echo "==> $*"; }
+section_header "Configuring KDE Global Shortcuts"
 
-echo
-info "Configuring KDE global shortcuts..."
-info "Target file: ${CONFIG_FILE}"
+log_info "Target file: ${CONFIG_FILE}"
 
 if [[ ! -f "${CONFIG_FILE}" ]]; then
-  warn "KDE shortcuts config file not found: ${CONFIG_FILE}"
+  log_error "KDE shortcuts config file not found: ${CONFIG_FILE}"
   exit 1
 fi
 
 # ----------------------------
 # Keyboard layout shortcut
 # ----------------------------
-echo
-info "Setting '${KEYBOARD_LAYOUT_KEY_NAME}' to: ${KEYBOARD_LAYOUT_SHORTCUT}"
+log_info "Setting keyboard layout shortcut: ${KEYBOARD_LAYOUT_SHORTCUT}"
 
 if ! grep -q "^${KEYBOARD_LAYOUT_KEY_NAME}=" "${CONFIG_FILE}"; then
-  warn "Key not found in ${CONFIG_FILE}: ${KEYBOARD_LAYOUT_KEY_NAME}"
-  warn "TIP: Run: grep -n \"${KEYBOARD_LAYOUT_KEY_NAME}\" ${CONFIG_FILE}"
+  log_error "Key not found in ${CONFIG_FILE}: ${KEYBOARD_LAYOUT_KEY_NAME}"
+  log_warn "Run: grep -n \"${KEYBOARD_LAYOUT_KEY_NAME}\" ${CONFIG_FILE}"
   exit 1
 fi
 
@@ -50,22 +49,19 @@ sed -i \
   "s|^${KEYBOARD_LAYOUT_KEY_NAME}=.*|${KEYBOARD_LAYOUT_KEY_NAME}=${KEYBOARD_LAYOUT_SHORTCUT},${KEYBOARD_LAYOUT_SHORTCUT},${KEYBOARD_LAYOUT_KEY_NAME}|" \
   "${CONFIG_FILE}"
 
-ok "Updated keyboard layout shortcut:"
-grep -n "^${KEYBOARD_LAYOUT_KEY_NAME}=" "${CONFIG_FILE}"
+log_success "Keyboard layout shortcut updated"
+log_result "Line" "$(grep -n "^${KEYBOARD_LAYOUT_KEY_NAME}=" "${CONFIG_FILE}")"
 
 # ----------------------------
 # KRunner shortcut
 # ----------------------------
-echo
-info "Setting KRunner shortcut to: Ctrl+Space"
-info "Target section: ${KRUNNER_SECTION_HEADER}"
-info "Setting: ${KRUNNER_KEY}=${KRUNNER_VALUE}"
+log_info "Setting KRunner shortcut: Ctrl+Space"
 
 # Ensure section exists; if not, append it
 if ! grep -q "^\[services\]\[org\.kde\.krunner\.desktop\]$" "${CONFIG_FILE}"; then
-  info "KRunner section not found, adding it..."
+  log_info "KRunner section not found, adding it..."
   printf "\n%s\n" "${KRUNNER_SECTION_HEADER}" >> "${CONFIG_FILE}"
-  ok "Added section: ${KRUNNER_SECTION_HEADER}"
+  log_success "Section added"
 fi
 
 # Replace or insert the key under the section header.
@@ -96,8 +92,9 @@ awk -v section="${KRUNNER_SECTION_HEADER}" -v key="${KRUNNER_KEY}" -v value="${K
 
 mv "${CONFIG_FILE}.tmp" "${CONFIG_FILE}"
 
-ok "Updated KRunner shortcut line:"
-sed -n "/^\[services\]\[org\.kde\.krunner\.desktop\]$/,/^\[/p" "${CONFIG_FILE}" | grep -n "^${KRUNNER_KEY}=" || true
+log_success "KRunner shortcut updated"
+log_result "Line" "$(sed -n "/^\[services\]\[org\.kde\.krunner\.desktop\]$/,/^\[/p" "${CONFIG_FILE}" | grep -n "^${KRUNNER_KEY}=" || true)"
 
-echo
-ok "KDE shortcut configuration complete."
+log_warn "Changes take effect after logout/reboot"
+
+section_end
