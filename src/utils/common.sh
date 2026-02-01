@@ -46,6 +46,8 @@ source "${UTILS_DIR}/install-binary.sh"
 # shellcheck source=src/utils/install-bashrc-snippet.sh
 source "${UTILS_DIR}/install-bashrc-snippet.sh"
 
+source "${UTILS_DIR}/run-helper-script.sh"
+
 # All utility functions are now available:
 # - create_symlink
 # - get_repo_root
@@ -60,3 +62,4 @@ source "${UTILS_DIR}/install-bashrc-snippet.sh"
 # - log_info, log_success, log_error, log_warn, log_skip, log_result
 # - section_header, section_end
 # - info, ok, warn, error (aliases)
+# - run_helper_script

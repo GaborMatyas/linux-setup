@@ -29,6 +29,9 @@ APPS=(
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 SRC_DIR="$(cd -- "${SCRIPT_DIR}/src" &>/dev/null && pwd)"
 
+# Source common utilities (includes run_helper_script)
+source "${SRC_DIR}/utils/common.sh"
+
 MONITOR_SWITCH_INSTALLER_SCRIPT="${SRC_DIR}/monitor-switch-install.sh"
 ZED_INSTALLER_SCRIPT="${SRC_DIR}/zed-installer.sh"
 PCLOUD_INSTALLER_SCRIPT="${SRC_DIR}/pcloud-install.sh"
@@ -81,22 +84,7 @@ install_app() {
   flatpak install -y "${REMOTE_NAME}" "${app_id}"
 }
 
-run_helper_script() {
-  local script_path="$1"
-  local script_desc="$2"
 
-  echo
-  echo "==> Running ${script_desc}..."
-
-  if [[ ! -f "${script_path}" ]]; then
-    echo "ERROR: Missing helper script: ${script_path}"
-    echo "Make sure ${script_path##*/} exists in the same directory as install.sh."
-    exit 1
-  fi
-
-  chmod +x "${script_path}"
-  "${script_path}"
-}
 
 echo
 echo "==> Installing core applications (KeePassXC, Zed)..."

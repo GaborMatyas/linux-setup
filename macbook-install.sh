@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# macbook-install.sh - macOS Setup Installer
+#
+# This script installs and configures applications and settings
+# specifically for macOS.
+#
+# Usage:
+#   ./macbook-install.sh
+#
+# Part of linux-setup repository - multi-OS dotfiles and configurations
+# For other operating systems, see:
+#   - bazzite-install.sh (Bazzite Linux)
+#
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+SRC_DIR="$(cd -- "${SCRIPT_DIR}/src" &>/dev/null && pwd)"
+
+# Source common utilities (includes run_helper_script)
+source "${SRC_DIR}/utils/common.sh"
+
+# Mac-specific helper scripts
+HOMEBREW_INSTALLER_SCRIPT="${SRC_DIR}/mac/homebrew-install.sh"
+
+echo
+echo "=========================================="
+echo "  macOS Setup Installer"
+echo "=========================================="
+
+# --- Helper scripts ---
+run_helper_script "${HOMEBREW_INSTALLER_SCRIPT}" "Homebrew installer"
+
+echo
+echo "==> Done."
+echo "==> macOS setup complete."
