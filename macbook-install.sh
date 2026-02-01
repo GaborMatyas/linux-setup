@@ -26,6 +26,9 @@ BREW_PACKAGES_INSTALLER_SCRIPT="${SRC_DIR}/mac/brew-packages-install.sh"
 BREW_CASKS_INSTALLER_SCRIPT="${SRC_DIR}/mac/brew-casks-install.sh"
 STATS_CONFIG_SCRIPT="${SRC_DIR}/mac/stats-config.sh"
 
+# Shared helper scripts (used by both macOS and Linux)
+TMUX_CONFIG_SCRIPT="${SRC_DIR}/tmux-config.sh"
+
 echo
 echo "=========================================="
 echo "  macOS Setup Installer"
@@ -36,6 +39,7 @@ run_helper_script "${HOMEBREW_INSTALLER_SCRIPT}" "Homebrew installer"
 run_helper_script "${BREW_PACKAGES_INSTALLER_SCRIPT}" "Homebrew packages installer"
 run_helper_script "${BREW_CASKS_INSTALLER_SCRIPT}" "Homebrew Cask applications installer"
 run_helper_script "${STATS_CONFIG_SCRIPT}" "Stats app configuration"
+run_helper_script "${TMUX_CONFIG_SCRIPT}" "tmux configuration"
 
 echo
 echo "==> Done."

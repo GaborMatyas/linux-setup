@@ -46,6 +46,7 @@ FZF_INSTALLER_SCRIPT="${SRC_DIR}/fzf-install.sh"
 RIPGREP_INSTALLER_SCRIPT="${SRC_DIR}/ripgrep-install.sh"
 FD_INSTALLER_SCRIPT="${SRC_DIR}/fd-install.sh"
 TMUX_INSTALLER_SCRIPT="${SRC_DIR}/tmux-install.sh"
+TMUX_CONFIG_SCRIPT="${SRC_DIR}/tmux-config.sh"
 YAZI_INSTALLER_SCRIPT="${SRC_DIR}/yazi-install.sh"
 
 
@@ -129,6 +130,7 @@ run_helper_script "${ZOXIDE_CLI_TOOL_INSTALLER_SCRIPT}" "Install Zoxide cli tool
 run_helper_script "${RIPGREP_INSTALLER_SCRIPT}" "Install ripgrep (rg) CLI tool"
 run_helper_script "${FD_INSTALLER_SCRIPT}" "Install fd (modern 'find' command alternative)"
 run_helper_script "${TMUX_INSTALLER_SCRIPT}" "Install tmux (by Linuxbrew)"
+run_helper_script "${TMUX_CONFIG_SCRIPT}" "tmux configuration"
 run_helper_script "${YAZI_INSTALLER_SCRIPT}" "Install Yazi CLI wrapper"
 
 
