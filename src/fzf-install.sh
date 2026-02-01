@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
 source "${REPO_ROOT}/src/utils/common.sh"
 
-REPO_FZF_BASHRC_SNIPPET="${REPO_ROOT}/files-to-copy/dotfiles/bashrc.d/fzf.sh"
+REPO_FZF_SHELLRC_SNIPPET="${REPO_ROOT}/files-to-copy/dotfiles/shellrc.d/fzf.sh"
 
 # Install location
 LOCAL_BIN="${HOME}/.local/bin"
@@ -16,10 +16,10 @@ FZF_BIN="${LOCAL_BIN}/fzf"
 
 section_header "Installing ${APP_ID}"
 
-# Always install/override bash integration snippet (repo-managed)
-log_info "Installing bash integration snippet..."
-install_bashrc_snippet "${REPO_FZF_BASHRC_SNIPPET}" "fzf.sh"
-log_success "Bash integration configured"
+# Always install/override shell integration snippet (repo-managed)
+log_info "Installing shell integration snippet..."
+install_shellrc_snippet "${REPO_FZF_SHELLRC_SNIPPET}" "fzf.sh"
+log_success "Shell integration configured"
 
 # If fzf exists, we still refreshed the snippet and can stop
 if is_installed binary "${FZF_BIN}"; then
@@ -67,6 +67,6 @@ log_success "Installation complete"
 
 log_result "Binary" "${FZF_BIN}"
 log_result "Version" "$("${FZF_BIN}" --version | head -n1 || true)"
-log_result "Note" "Restart terminal or run: source ~/.bashrc"
+log_result "Note" "Restart terminal or source your shell rc file"
 
 section_end

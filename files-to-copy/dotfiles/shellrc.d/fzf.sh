@@ -1,17 +1,19 @@
 # fzf (fuzzy finder)
-# Bash integration: key-bindings + completion
+# Shell integration: key-bindings + completion
+# Works in both bash and zsh
 # Uses fd for default file listing if available.
 # Prints a warning every interactive shell start until fzf (or fd) is installed.
 
 # Only run in interactive shells
-case $- in
-  *i*) ;;
-  *) return ;;
-esac
+case $- in *i*) ;; *) return ;; esac
 
 if command -v fzf >/dev/null 2>&1; then
   # Modern integration method (fzf >= 0.48.0)
-  eval "$(fzf --bash)"
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    eval "$(fzf --zsh)"
+  else
+    eval "$(fzf --bash)"
+  fi
 
   # Prefer fd for file discovery if available
   if command -v fd >/dev/null 2>&1; then

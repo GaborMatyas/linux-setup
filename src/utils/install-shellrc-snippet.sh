@@ -2,19 +2,25 @@
 set -euo pipefail
 
 # Usage:
-#   install_bashrc_snippet <source_snippet> <snippet_name>
+#   install_shellrc_snippet <source_snippet> <snippet_name>
 #
 # Behavior:
-# - Creates ~/.bashrc.d directory if it doesn't exist
-# - Symlinks repo-managed snippet to ~/.bashrc.d/<snippet_name>
+# - Creates ~/.shellrc.d directory if it doesn't exist
+# - Symlinks repo-managed snippet to ~/.shellrc.d/<snippet_name>
 # - Uses create-symlink.sh utility for consistent symlink behavior
 # - Validates that source snippet exists
+# - Works for both bash and zsh (user sources from their respective rc file)
 #
 # Examples:
-#   install_bashrc_snippet "${REPO_ROOT}/files-to-copy/dotfiles/bashrc.d/fzf.sh" "fzf.sh"
-#   install_bashrc_snippet "${REPO_ROOT}/files-to-copy/dotfiles/bashrc.d/zoxide.sh" "zoxide.sh"
+#   install_shellrc_snippet "${REPO_ROOT}/files-to-copy/dotfiles/shellrc.d/fzf.sh" "fzf.sh"
+#   install_shellrc_snippet "${REPO_ROOT}/files-to-copy/dotfiles/shellrc.d/zoxide.sh" "zoxide.sh"
+#
+# Note: User must add the following to their ~/.bashrc or ~/.zshrc:
+#   for file in ~/.shellrc.d/*.sh; do
+#     [[ -r "$file" ]] && source "$file"
+#   done
 
-install_bashrc_snippet() {
+install_shellrc_snippet() {
   local src="$1"
   local snippet_name="$2"
 
@@ -33,10 +39,10 @@ install_bashrc_snippet() {
     return 1
   fi
 
-  local bashrc_d_dir="${HOME}/.bashrc.d"
-  local target="${bashrc_d_dir}/${snippet_name}"
+  local shellrc_d_dir="${HOME}/.shellrc.d"
+  local target="${shellrc_d_dir}/${snippet_name}"
 
-  mkdir -p "${bashrc_d_dir}"
+  mkdir -p "${shellrc_d_dir}"
 
   # Source the create-symlink utility
   local script_dir
@@ -46,7 +52,7 @@ install_bashrc_snippet() {
 
   create_symlink "${src}" "${target}"
 
-  echo "==> Bash snippet installed:"
+  echo "==> Shell snippet installed:"
   echo "==>   Source: ${src}"
   echo "==>   Target: ${target}"
   echo "==> Note: This file is repo-managed via symlink. Updates require no reinstall."
@@ -60,5 +66,5 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     echo "Usage: $0 <source_snippet> <snippet_name>" >&2
     exit 1
   fi
-  install_bashrc_snippet "$@"
+  install_shellrc_snippet "$@"
 fi
