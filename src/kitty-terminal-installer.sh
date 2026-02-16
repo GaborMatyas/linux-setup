@@ -33,6 +33,8 @@ source "${REPO_ROOT}/src/utils/common.sh"
 
 REPO_KITTY_CONF="${REPO_ROOT}/files-to-copy/dotfiles/kitty/kitty.conf"
 REPO_KITTY_THEME="${REPO_ROOT}/files-to-copy/dotfiles/kitty/theme.conf"
+REPO_KITTY_SHELL_INTEGRATION="${REPO_ROOT}/files-to-copy/dotfiles/bashrc.d/kitty.sh"
+BASHRC_D_DIR="${HOME}/.bashrc.d"
 
 # Treat kitty as installed if the expected install directory exists,
 # or if kitty is already on PATH.
@@ -63,6 +65,17 @@ install_kitty_config() {
     log_success "Theme installed"
     log_result "Source" "${REPO_KITTY_THEME}"
     log_result "Target" "${theme_target}"
+  fi
+
+  # Install shell integration for bashrc.d
+  if [[ -f "${REPO_KITTY_SHELL_INTEGRATION}" ]]; then
+    log_info "Installing kitty shell integration (repo-managed via symlink)..."
+    mkdir -p "${BASHRC_D_DIR}"
+    local shell_target="${BASHRC_D_DIR}/kitty.sh"
+    create_symlink "${REPO_KITTY_SHELL_INTEGRATION}" "${shell_target}"
+    log_success "Shell integration installed"
+    log_result "Source" "${REPO_KITTY_SHELL_INTEGRATION}"
+    log_result "Target" "${shell_target}"
   fi
 }
 

@@ -24,6 +24,7 @@ APPS=(
   "org.mozilla.Thunderbird"
   "com.transmissionbt.Transmission"
   "org.videolan.VLC"
+  "md.obsidian.Obsidian"
 )
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
@@ -99,7 +100,7 @@ run_helper_script() {
 }
 
 echo
-echo "==> Installing core applications (KeePassXC, Zed)..."
+echo "==> Installing core applications..."
 for app in "${APPS[@]}"; do
   install_app "$app"
 done

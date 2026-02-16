@@ -1,0 +1,15 @@
+# Yazi keymap configuration
+# This file customizes key bindings for Yazi file manager
+# Repo-managed via symlink
+
+[manager]
+# Keep default keybindings and add custom ones here
+# Zoxide integration is handled by Yazi's built-in support
+# The "No directory history found" message is just informational
+# As you navigate with cd/z in your terminal, zoxide will learn your patterns
+
+# You can add custom keybindings here, for example:
+# prepend_keymap = [
+#   { on = [ "g", "h" ], run = "cd ~", desc = "Go to home" },
+#   { on = [ "g", "c" ], run = "cd ~/.config", desc = "Go to config" },
+# ]
