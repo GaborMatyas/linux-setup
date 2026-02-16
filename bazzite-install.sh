@@ -25,6 +25,7 @@ APPS=(
   "com.transmissionbt.Transmission"
   "org.videolan.VLC"
   "md.obsidian.Obsidian"
+  "me.kozec.syncthingtk"
 )
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
