@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=pCloud
+Comment=pCloud Drive - Secure Cloud Storage
+Exec=pcloud
+Icon=pcloud
+Categories=Network;FileTransfer;
+Terminal=false
+StartupNotify=true

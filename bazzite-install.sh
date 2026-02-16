@@ -31,6 +31,9 @@ APPS=(
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 SRC_DIR="$(cd -- "${SCRIPT_DIR}/src" &>/dev/null && pwd)"
 
+# Source utilities
+source "${SCRIPT_DIR}/src/utils/common.sh"
+
 MONITOR_SWITCH_INSTALLER_SCRIPT="${SRC_DIR}/monitor-switch-install.sh"
 ZED_INSTALLER_SCRIPT="${SRC_DIR}/zed-installer.sh"
 PCLOUD_INSTALLER_SCRIPT="${SRC_DIR}/pcloud-install.sh"
@@ -45,26 +48,30 @@ TMUX_INSTALLER_SCRIPT="${SRC_DIR}/tmux-install.sh"
 YAZI_INSTALLER_SCRIPT="${SRC_DIR}/yazi-install.sh"
 
 
-echo
-echo "==> Checking Flatpak availability..."
+section_header "Setting Up Flatpak"
+
+log_info "Checking Flatpak availability..."
 if ! command -v flatpak >/dev/null 2>&1; then
-  echo "ERROR: 'flatpak' is not installed or not in PATH."
-  echo "On Bazzite it should be available by default. Please install Flatpak first."
+  log_error "'flatpak' is not installed or not in PATH"
+  log_warn "On Bazzite it should be available by default. Please install Flatpak first."
   exit 1
 fi
+log_success "Flatpak available"
 
-echo
-echo "==> Ensuring Flathub remote exists..."
+log_info "Ensuring Flathub remote exists..."
 if ! flatpak remotes --columns=name | tail -n +2 | grep -qx "${REMOTE_NAME}"; then
-  echo "Adding Flathub remote..."
+  log_info "Adding Flathub remote..."
   flatpak remote-add --if-not-exists "${REMOTE_NAME}" "${REMOTE_URL}"
+  log_success "Flathub remote added"
 else
-  echo "Flathub remote already present."
+  log_success "Flathub remote already configured"
 fi
 
-echo
-echo "==> Updating Flatpak appstream metadata..."
+log_info "Updating Flatpak appstream metadata..."
 flatpak update --appstream -y || true
+log_success "Metadata updated"
+
+section_end
 
 is_installed() {
   local app_id="$1"
@@ -75,24 +82,22 @@ install_app() {
   local app_id="$1"
 
   if is_installed "$app_id"; then
-    echo "==> Already installed: ${app_id} (skipping)"
+    log_skip "Already installed: ${app_id}"
     return 0
   fi
 
-  echo "==> Installing: ${app_id}"
+  log_info "Installing: ${app_id}"
   flatpak install -y "${REMOTE_NAME}" "${app_id}"
+  log_success "Installed: ${app_id}"
 }
 
 run_helper_script() {
   local script_path="$1"
   local script_desc="$2"
 
-  echo
-  echo "==> Running ${script_desc}..."
-
   if [[ ! -f "${script_path}" ]]; then
-    echo "ERROR: Missing helper script: ${script_path}"
-    echo "Make sure ${script_path##*/} exists in the same directory as install.sh."
+    log_error "Missing helper script: ${script_path}"
+    log_warn "Make sure ${script_path##*/} exists in the same directory as install.sh."
     exit 1
   fi
 
@@ -100,16 +105,16 @@ run_helper_script() {
   "${script_path}"
 }
 
-echo
-echo "==> Installing core applications..."
+section_header "Installing Core Applications"
 for app in "${APPS[@]}"; do
   install_app "$app"
 done
+section_end
 
 # --- Helper scripts (consistent execution) ---
 run_helper_script "${MONITOR_SWITCH_INSTALLER_SCRIPT}" "Monitor switch installer logic"
 run_helper_script "${ZED_INSTALLER_SCRIPT}" "Zed installer logic"
-run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer logic (Option A client)"
+run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer (Official Client)"
 run_helper_script "${BAZZITE_GLOBAL_SHORTCUTS_SCRIPT}" "Bazzite KDE global shortcuts configuration"
 run_helper_script "${BAZZITE_GLOBAL_CONFIG_SCRIPT}" "Bazzite KDE global config change"
 run_helper_script "${KITTY_TERMINAL_INSTALLER_SCRIPT}" "Install Kitty terminal"
@@ -122,6 +127,7 @@ run_helper_script "${YAZI_INSTALLER_SCRIPT}" "Install Yazi CLI wrapper"
 
 
 
-echo
-echo "==> Done."
-echo "==> Please restart the system so the new config and shortcut changes can be applied."
+section_header "Installation Complete"
+log_success "All components installed successfully"
+log_warn "Please restart the system for config and shortcut changes to take effect"
+section_end
