@@ -26,6 +26,7 @@ APPS=(
   "org.videolan.VLC"
   "md.obsidian.Obsidian"
   "me.kozec.syncthingtk"
+  "org.libreoffice.LibreOffice"
 )
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
