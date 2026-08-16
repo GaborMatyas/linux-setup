@@ -31,6 +31,7 @@ CASKS=(
   "alt-tab:AltTab.app"
   "raycast:Raycast.app"
   "stats:Stats.app"
+  "kitty:kitty.app"
 )
 
 # =============================================================================

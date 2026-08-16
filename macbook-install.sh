@@ -24,7 +24,8 @@ source "${SRC_DIR}/utils/common.sh"
 HOMEBREW_INSTALLER_SCRIPT="${SRC_DIR}/mac/homebrew-install.sh"
 BREW_PACKAGES_INSTALLER_SCRIPT="${SRC_DIR}/mac/brew-packages-install.sh"
 BREW_CASKS_INSTALLER_SCRIPT="${SRC_DIR}/mac/brew-casks-install.sh"
-STATS_CONFIG_SCRIPT="${SRC_DIR}/mac/stats-config.sh"
+KITTY_CONFIG_SCRIPT="${SRC_DIR}/mac/kitty-config.sh"
+PRINT_FURTHER_STEPS_SCRIPT="${SRC_DIR}/mac/print-further-steps.sh"
 
 # Shared helper scripts (used by both macOS and Linux)
 TMUX_CONFIG_SCRIPT="${SRC_DIR}/tmux-config.sh"
@@ -38,8 +39,11 @@ echo "=========================================="
 run_helper_script "${HOMEBREW_INSTALLER_SCRIPT}" "Homebrew installer"
 run_helper_script "${BREW_PACKAGES_INSTALLER_SCRIPT}" "Homebrew packages installer"
 run_helper_script "${BREW_CASKS_INSTALLER_SCRIPT}" "Homebrew Cask applications installer"
-run_helper_script "${STATS_CONFIG_SCRIPT}" "Stats app configuration"
+run_helper_script "${KITTY_CONFIG_SCRIPT}" "Kitty terminal configuration"
 run_helper_script "${TMUX_CONFIG_SCRIPT}" "tmux configuration"
+
+# --- Print manual steps at the end ---
+run_helper_script "${PRINT_FURTHER_STEPS_SCRIPT}" "Print further steps"
 
 echo
 echo "==> Done."
