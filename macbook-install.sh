@@ -22,6 +22,7 @@ source "${SRC_DIR}/utils/common.sh"
 
 # Mac-specific helper scripts
 HOMEBREW_INSTALLER_SCRIPT="${SRC_DIR}/mac/homebrew-install.sh"
+BREW_PACKAGES_INSTALLER_SCRIPT="${SRC_DIR}/mac/brew-packages-install.sh"
 
 echo
 echo "=========================================="
@@ -30,6 +31,7 @@ echo "=========================================="
 
 # --- Helper scripts ---
 run_helper_script "${HOMEBREW_INSTALLER_SCRIPT}" "Homebrew installer"
+run_helper_script "${BREW_PACKAGES_INSTALLER_SCRIPT}" "Homebrew packages installer"
 
 echo
 echo "==> Done."
