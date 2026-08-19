@@ -42,6 +42,8 @@ source "${UTILS_DIR}/download-and-extract.sh"
 
 # shellcheck source=src/utils/install-binary.sh
 source "${UTILS_DIR}/install-binary.sh"
+# shellcheck source=src/utils/install-brew-package.sh
+source "${UTILS_DIR}/install-brew-package.sh"
 
 # shellcheck source=src/utils/install-shellrc-snippet.sh
 source "${UTILS_DIR}/install-shellrc-snippet.sh"
