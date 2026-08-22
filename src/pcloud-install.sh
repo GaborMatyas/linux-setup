@@ -9,22 +9,15 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
 source "${REPO_ROOT}/src/utils/common.sh"
 
-# Repo-managed desktop entry
-REPO_DESKTOP_ENTRY="${REPO_ROOT}/files-to-copy/desktop-entries/pcloud.desktop"
-
 # Installation paths
 LOCAL_BIN="${HOME}/.local/bin"
 PCLOUD_BIN="${LOCAL_BIN}/pcloud"
+PCLOUD_APPIMAGE="${LOCAL_BIN}/pCloud.AppImage"
 DESKTOP_DIR="${HOME}/.local/share/applications"
+REPO_DESKTOP_ENTRY="${REPO_ROOT}/files-to-copy/desktop-entries/pcloud.desktop"
 DESKTOP_FILE="${DESKTOP_DIR}/pcloud.desktop"
 
 section_header "Installing pCloud (Official Client)"
-
-# Check if pCloud binary exists
-if is_installed binary "${PCLOUD_BIN}"; then
-  log_skip "pCloud binary already installed"
-  log_result "Binary" "${PCLOUD_BIN}"
-else
 
 # Check dependencies
 log_info "Checking dependencies..."
@@ -36,9 +29,12 @@ mkdir -p "${LOCAL_BIN}"
 mkdir -p "${DESKTOP_DIR}"
 
 # Check if user has already downloaded pCloud manually
-if [[ -f "${PCLOUD_BIN}" && -x "${PCLOUD_BIN}" ]]; then
+if [[ -f "${PCLOUD_BIN}" ]] && [[ -x "${PCLOUD_BIN}" ]]; then
   log_info "Found existing pCloud binary"
   log_success "pCloud already available"
+elif [[ -f "${PCLOUD_APPIMAGE}" ]] && [[ -x "${PCLOUD_APPIMAGE}" ]]; then
+  log_info "Found pCloud AppImage"
+  log_success "pCloud ready to run"
 else
   log_warn "pCloud AppImage must be downloaded manually"
   echo
@@ -48,18 +44,16 @@ else
   log_info "Instructions:"
   echo "  1. Visit: ${PCLOUD_DOWNLOAD_PAGE}"
   echo "  2. Click 'Download' under 'pCloud Drive for Linux'"
-  echo "  3. Save the downloaded file (AppImage) to: ${PCLOUD_BIN}"
+  echo "  3. Save the downloaded file (AppImage) to: ${PCLOUD_APPIMAGE}"
   echo "  4. Run this installer again"
   echo
-  log_warn "Quick commands (after downloading to ~/Downloads/pcloud):"
-  echo "  mv ~/Downloads/pcloud ${PCLOUD_BIN}"
-  echo "  chmod +x ${PCLOUD_BIN}"
-  echo "  ./bazzite-install.sh  # or ./src/pcloud-install.sh"
+  log_warn "Quick commands (after downloading):"
+  echo "  mv ~/Downloads/pcloud.AppImage ${PCLOUD_APPIMAGE}"
+  echo "  chmod +x ${PCLOUD_APPIMAGE}"
   echo
-  log_error "pCloud not found at: ${PCLOUD_BIN}"
+  log_error "pCloud not found at: ${PCLOUD_APPIMAGE}"
   section_end
   exit 1
-fi
 fi
 
 # Create desktop entry via symlink (repo-managed)
@@ -75,8 +69,8 @@ create_symlink "${REPO_DESKTOP_ENTRY}" "${DESKTOP_FILE}"
 log_success "Desktop entry created (repo-managed via symlink)"
 
 # Validate installation
-if [[ ! -x "${PCLOUD_BIN}" ]]; then
-  log_error "pCloud binary is not executable: ${PCLOUD_BIN}"
+if [[ ! -x "${PCLOUD_APPIMAGE}" ]]; then
+  log_error "pCloud AppImage is not executable: ${PCLOUD_APPIMAGE}"
   exit 1
 fi
 

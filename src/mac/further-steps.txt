@@ -1,0 +1,10 @@
+Further steps:
+- Change the settings of Sidebar in Finder manually => My private trello ticket: https://trello.com/c/waIJXkQD
+- Swap Command and Control keys in System Settings/Customize Modifier Keys and KEYBOARD SHORTCUTS => My private trello ticket: https://trello.com/c/PZan166U
+- Set up Alt-Tab shortcuts => My private trello ticket: https://trello.com/c/KJlgPuTV
+- Import Rectangle's RectangleCustomConf.json config file from 'lib' folder
+- Hide the default battery icon in the menu bar => My private trello ticket: https://trello.com/c/moi5tuNl
+- Set up Stats plugin (start at login) and use analog style for System Settings/Clock => Youtube tutorial: https://www.youtube.com/watch?t=1111&v=GK7zLYAXdDs&feature=youtu.be
+Also please check the notifications settings in System Preferences, and enable them for Stats
+- Install a required NodeJS version with NVM => Public Github page: https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage
+- Replace Spotlight's keyboard shortcut with Raycast, as it will be the default searching app for you.
