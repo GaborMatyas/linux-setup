@@ -43,8 +43,7 @@ FZF_INSTALLER_SCRIPT="${SRC_DIR}/fzf-install.sh"
 RIPGREP_INSTALLER_SCRIPT="${SRC_DIR}/ripgrep-install.sh"
 FD_INSTALLER_SCRIPT="${SRC_DIR}/fd-install.sh"
 PCLOUD_INSTALLER_SCRIPT="${SRC_DIR}/pcloud-install.sh"
-TMUX_INSTALLER_SCRIPT="${SRC_DIR}/tmux-install.sh"
-TMUX_CONFIG_SCRIPT="${SRC_DIR}/tmux-config.sh"
+
 STOW_INSTALLER_SCRIPT="${SRC_DIR}/stow-install.sh"
 STOW_CONFIG_SCRIPT="${SRC_DIR}/stow-config.sh"
 YAZI_INSTALLER_SCRIPT="${SRC_DIR}/yazi-install.sh"
@@ -112,8 +111,6 @@ run_helper_script "${RIPGREP_INSTALLER_SCRIPT}" "Install ripgrep (rg) CLI tool"
 run_helper_script "${FD_INSTALLER_SCRIPT}" "Install fd (modern 'find' command alternative)"
 run_helper_script "${STOW_INSTALLER_SCRIPT}" "Install stow"
 run_helper_script "${STOW_CONFIG_SCRIPT}" "Configure stow symlinks"
-run_helper_script "${TMUX_INSTALLER_SCRIPT}" "Install tmux (by Linuxbrew)"
-run_helper_script "${TMUX_CONFIG_SCRIPT}" "tmux configuration"
 run_helper_script "${YAZI_INSTALLER_SCRIPT}" "Install Yazi CLI"
 
 

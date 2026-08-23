@@ -11,14 +11,18 @@ TARGET_DIR="${HOME}"
 
 section_header "Configuring stow symlinks"
 
-# Run stow to create symlinks
-log_info "Running: stow -t ${TARGET_DIR} -d ${STOW_DIR}"
+# Iterate through all packages in stow/ directory
+log_info "Discovering stow packages..."
 cd "${STOW_DIR}"
-stow -t "${TARGET_DIR}" -d "${STOW_DIR}"
+for package in */; do
+    if [ -d "$package" ]; then
+        log_info "Stowing: ${package%/}"
+        stow -o -t "${TARGET_DIR}" -d "${STOW_DIR}" "${package%/}"
+    fi
+done
 
 if [ $? -eq 0 ]; then
   log_success "Stow configuration complete"
-  log_result "Dotfiles location" "${TARGET_DIR}"
 else
   log_error "Stow failed"
   section_end
