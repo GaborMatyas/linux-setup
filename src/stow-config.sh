@@ -17,7 +17,11 @@ cd "${STOW_DIR}"
 for package in */; do
     if [ -d "$package" ]; then
         log_info "Stowing: ${package%/}"
-        stow -o -t "${TARGET_DIR}" -d "${STOW_DIR}" "${package%/}"
+        # stow requires parent directories to exist in the target (no
+        # flag creates them, in 1.x or 2.x) — create them explicitly here.
+        ( cd "${STOW_DIR}/${package%/}" \
+          && find . -type f -exec dirname {} + | sort -u | xargs -r -I{} mkdir -p -- "${TARGET_DIR}/{}" )
+        stow -t "${TARGET_DIR}" -d "${STOW_DIR}" "${package%/}"
     fi
 done
 
