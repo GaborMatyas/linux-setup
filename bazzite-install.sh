@@ -33,7 +33,6 @@ SRC_DIR="$(cd -- "${SCRIPT_DIR}/src" &>/dev/null && pwd)"
 # Source common utilities (includes run_helper_script)
 source "${SRC_DIR}/utils/common.sh"
 
-MONITOR_SWITCH_INSTALLER_SCRIPT="${SRC_DIR}/monitor-switch-install.sh"
 ZED_INSTALLER_SCRIPT="${SRC_DIR}/zed-installer.sh"
 BAZZITE_GLOBAL_SHORTCUTS_SCRIPT="${SRC_DIR}/bazzite-global-shortcuts.sh"
 BAZZITE_GLOBAL_CONFIG_SCRIPT="${SRC_DIR}/bazzite-global-config.sh"
@@ -99,7 +98,6 @@ done
 section_end
 
 # --- Helper scripts (consistent execution) ---
-run_helper_script "${MONITOR_SWITCH_INSTALLER_SCRIPT}" "Monitor switch installer logic"
 run_helper_script "${ZED_INSTALLER_SCRIPT}" "Zed installer logic"
 run_helper_script "${PCLOUD_INSTALLER_SCRIPT}" "pCloud installer (Official Client)"
 run_helper_script "${BAZZITE_GLOBAL_SHORTCUTS_SCRIPT}" "Bazzite KDE global shortcuts configuration"
