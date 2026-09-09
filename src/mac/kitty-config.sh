@@ -17,9 +17,9 @@ source "${REPO_ROOT}/src/utils/common.sh"
 
 KITTY_CONFIG_DIR="${HOME}/.config/kitty"
 
-# Repo-managed config files
-REPO_KITTY_CONF="${REPO_ROOT}/files-to-copy/dotfiles/kitty/kitty.conf"
-REPO_KITTY_THEME="${REPO_ROOT}/files-to-copy/dotfiles/kitty/theme.conf"
+# Repo-managed config files (stow-managed: stow/kitty/.config/kitty/)
+REPO_KITTY_CONF="${REPO_ROOT}/stow/kitty/.config/kitty/kitty.conf"
+REPO_KITTY_THEME="${REPO_ROOT}/stow/kitty/.config/kitty/theme.conf"
 
 section_header "Configuring Kitty terminal"
 
