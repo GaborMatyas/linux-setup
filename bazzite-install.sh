@@ -19,6 +19,7 @@ REMOTE_NAME="flathub"
 REMOTE_URL="https://dl.flathub.org/repo/flathub.flatpakrepo"
 
 APPS=(
+  "org.atheme.audacious"
   "org.keepassxc.KeePassXC"
   "dev.zed.Zed"
   "org.mozilla.Thunderbird"

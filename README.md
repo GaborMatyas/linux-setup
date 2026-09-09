@@ -15,7 +15,7 @@ Bazzite is an immutable Fedora-based Linux distribution optimized for gaming and
 **Run:** `./bazzite-install.sh`
 
 **Installs:**
-- Core applications (KeePassXC, Zed, Thunderbird, Transmission, VLC)
+- Core applications (Audacious, KeePassXC, Zed, Thunderbird, Transmission, VLC)
 - Development tools (ripgrep, fd, fzf, zoxide, tmux, yazi)
 - Terminal setup (Kitty with custom config)
 - KDE Plasma configurations (shortcuts, power management)
