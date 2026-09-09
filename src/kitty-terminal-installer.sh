@@ -13,9 +13,11 @@ set -euo pipefail
 #   - optionally set kitty as the default terminal via ~/.config/xdg-terminals.list
 #
 # Note:
-#   - kitty config (kitty.conf / theme.conf) is managed via GNU Stow:
-#     see stow/kitty/ and src/stow-config.sh
-#   - this script only installs the app and bash shell integration
+#
+#   - kitty config (kitty.conf / theme.conf) and bash shell integration
+#     (kitty.sh) are managed via GNU Stow: see stow/kitty/ and
+#     src/stow-config.sh
+#   - this script only installs the app and desktop integration
 #
 # Source documentation:
 # https://sw.kovidgoyal.net/kitty/binary/
@@ -31,34 +33,17 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
 source "${REPO_ROOT}/src/utils/common.sh"
 
-REPO_KITTY_SHELL_INTEGRATION="${REPO_ROOT}/files-to-copy/dotfiles/bashrc.d/kitty.sh"
-BASHRC_D_DIR="${HOME}/.bashrc.d"
-
 # Treat kitty as installed if the expected install directory exists,
 # or if kitty is already on PATH.
 is_kitty_installed() {
   [[ -d "${KITTY_INSTALL_DIR}" ]] || command -v kitty >/dev/null 2>&1
 }
 
-install_kitty_shell_integration() {
-  # Install shell integration for bashrc.d
-  if [[ -f "${REPO_KITTY_SHELL_INTEGRATION}" ]]; then
-    log_info "Installing kitty shell integration (repo-managed via symlink)..."
-    mkdir -p "${BASHRC_D_DIR}"
-    local shell_target="${BASHRC_D_DIR}/kitty.sh"
-    create_symlink "${REPO_KITTY_SHELL_INTEGRATION}" "${shell_target}"
-    log_success "Shell integration installed"
-    log_result "Source" "${REPO_KITTY_SHELL_INTEGRATION}"
-    log_result "Target" "${shell_target}"
-  fi
-}
-
 section_header "Installing ${APP_ID}"
 
-# If kitty is already installed, still ensure shell integration is linked
+# If kitty is already installed, nothing else to do (config is stow-managed)
 if is_kitty_installed; then
   log_skip "Already installed: ${APP_ID}"
-  install_kitty_shell_integration
   section_end
   exit 0
 fi
@@ -99,9 +84,6 @@ log_info "Setting kitty as default terminal for xdg-terminal-exec..."
 mkdir -p "${CONFIG_DIR}"
 echo 'kitty.desktop' > "${CONFIG_DIR}/xdg-terminals.list"
 log_success "Default terminal configured"
-
-# Install bash shell integration after installation
-install_kitty_shell_integration
 
 log_info "Verifying installation..."
 if command -v kitty >/dev/null 2>&1; then
